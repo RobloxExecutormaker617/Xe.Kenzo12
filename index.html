@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Showcase xe_kenzo2 Profile</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #2f3136;
+      color: white;
+      font-family: 'Arial', sans-serif;
+    }
+    #canvas-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .glow {
+      animation: glow 1.5s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00;
+      }
+      to {
+        text-shadow: 0 0 20px #ffffff, 0 0 30px #ffffff, 0 0 40px #ffffff;
+      }
+    }
+    .bounce {
+      animation: bounce 0.5s ease infinite alternate;
+    }
+    @keyframes bounce {
+      from {
+        transform: translateY(0);
+      }
+      to {
+        transform: translateY(-15px);
+      }
+    }
+    .spin {
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    .profile-card {
+      background: #f1c27d;
+      border: 3px solid #ff8c00;
+      border-radius: 15px;
+      padding: 25px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .flash {
+      animation: flash 1s ease infinite;
+    }
+    @keyframes flash {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div id="canvas-container"></div>
+  <div class="relative z-10 flex flex-col items-center justify-center h-screen">
+    <div class="profile-card text-center max-w-lg">
+      <div class="w-36 h-36 bg-white rounded-none mx-auto mb-4" title="Removed circle; replace with asset.png if needed"></div>
+      <h1 class="text-5xl font-bold glow mt-4">xe_kenzo2!</h1>
+      <p class="text-2xl mt-2 flash">Epic Discord Profile</p>
+      <div class="mt-4 text-lg">
+        <p><strong>About Me:</strong> owner-https://discord.gg/chichoralive join this server!!</p>
+        <p><strong>Member Since:</strong> May 29, 2025</p>
+        <p><strong>Mutual Friend:</strong> 1</p>
+        <p><strong>Mutual Servers:</strong> 2</p>
+        <p><strong>Status:</strong> 🎮 HUH</p>
+      </div>
+      <a href="https://discord.com/channels/@me/1389152011081089045" target="_blank" class="text-blue-400 hover:underline text-xl font-semibold glow mt-4 block">Visit Channel</a>
+    </div>
+    <div class="mt-6 flex space-x-4">
+      <button class="bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Add Friend</button>
+      <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition-all duration-300 transform hover:scale-110">Join Server</button>
+    </div>
+    <div class="mt-8 flex space-x-8">
+      <div class="text-center">
+        <p class="text-3xl font-bold spin">🎉</p>
+        <p>Party Time</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold spin">🔥</p>
+        <p>Hot Vibes</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold spin">💥</p>
+        <p>Blast Off</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold spin">🌟</p>
+        <p>Star Power</p>
+      </div>
+      <div class="text-center">
+        <p class="text-3xl font-bold spin">🎮</p>
+        <p>Game On</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function setup() {
+      let canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent('canvas-container');
+      background(47, 49, 54);
+    }
+
+    let particles = [];
+
+    function draw() {
+      background(47, 49, 54, 50);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].show();
+        if (particles[i].finished()) {
+          particles.splice(i, 1);
+        }
+      }
+      if (frameCount % 2 == 0) {
+        particles.push(new Particle());
+      }
+    }
+
+    class Particle {
+      constructor() {
+        this.x = random(width);
+        this.y = random(height);
+        this.vx = random(-3, 3);
+        this.vy = random(-7, -3);
+        this.alpha = 255;
+        this.size = random(4, 12);
+        this.color = color(random(255), random(255), random(255));
+      }
+
+      finished() {
+        return this.alpha < 0;
+      }
+
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.alpha -= 3;
+        this.size *= 0.98;
+      }
+
+      show() {
+        noStroke();
+        fill(red(this.color), green(this.color), blue(this.color), this.alpha);
+        ellipse(this.x, this.y, this.size);
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+    }
+  </script>
+</body>
+</html>
